@@ -20,6 +20,7 @@ import { UserContext } from "../store/user-context";
 import ImageUpload from "../components/UI/ImageUpload";
 import * as ImagePicker from "expo-image-picker";
 import ImageDisplay from "../components/UI/ImageDisplay";
+import { COLORS } from "../util/colors";
 
 const Schema = yup.object({
   title: yup.string().required().min(5),
@@ -30,6 +31,7 @@ const CreateBlogScreen = () => {
   const postCtx = useContext(PostContext);
   const userCtx = useContext(UserContext);
   const [images, setImages] = useState([]);
+  const [imageCount, setImageCount] = useState(0);
   const screenWidth = Dimensions.get("screen").width;
   const handleSubmit = async (values) => {
     await imageHandler();
@@ -39,9 +41,26 @@ const CreateBlogScreen = () => {
   };
   const imageHandler = async () => {
     let status = ImagePicker.requestMediaLibraryPermissionsAsync();
-
     const result = await ImagePicker.launchImageLibraryAsync();
-    setImages((prev) => [...prev, { uri: result.assets[0].uri }]);
+    console.log(images.length);
+    if (images.length > 1) {
+      Alert.alert(
+        "Maximum exceeded!",
+        "Maximum ammount of picture limit has been reached!"
+      );
+      return;
+    }
+    setImages((prev) => [
+      ...prev,
+      { uri: result.assets[0].uri, id: new Date() },
+    ]);
+    setImageCount(images.length + 1);
+  };
+
+  const deleteImage = (id) => {
+    const newState = images.filter((image) => image.id !== id);
+    setImages(newState);
+    setImageCount((prevCount) => prevCount - 1);
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -93,10 +112,18 @@ const CreateBlogScreen = () => {
                     images.map((image, index) => {
                       return (
                         <TouchableOpacity key={index}>
-                          <ImageDisplay source={image.uri} />
+                          <ImageDisplay
+                            source={image.uri}
+                            onPress={() => deleteImage(image.id)}
+                          />
                         </TouchableOpacity>
                       );
                     })}
+                  <View style={styles.countContainer}>
+                    <Text style={styles.countContainerText}>
+                      {imageCount}/2
+                    </Text>
+                  </View>
                 </ScrollView>
                 <View style={styles.btnContainer}>
                   <ButtonUI text="Add" />
@@ -128,6 +155,12 @@ const styles = StyleSheet.create({
     flexGrow: 0,
     marginHorizontal: 10,
     marginBottom: 10,
+  },
+  countContainer: {
+    justifyContent: "flex-end",
+  },
+  countContainerText: {
+    color: COLORS.gray,
   },
 });
 
