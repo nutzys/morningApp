@@ -27,7 +27,7 @@ const Schema = yup.object({
   content: yup.string().required().min(10),
 });
 
-const CreateBlogScreen = () => {
+const CreateBlogScreen = ({ navigation }) => {
   const postCtx = useContext(PostContext);
   const userCtx = useContext(UserContext);
   const [imageCount, setImageCount] = useState(0);
@@ -57,10 +57,9 @@ const CreateBlogScreen = () => {
     setImageCount((prevCount) => prevCount - 1);
   };
 
-  const submitHandler = async (values) => {
-    postCtx.addTitle(values.title);
-    postCtx.addContent(values.content);
-    //postCtx.create(images);
+  const submitHandler = (values) => {
+    postCtx.create(values.title, values.content, images);
+    navigation.replace("Home");
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
