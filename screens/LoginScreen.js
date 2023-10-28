@@ -1,8 +1,15 @@
-import { Image, Keyboard, Pressable, StyleSheet, ViewBase } from "react-native";
+import {
+  Button,
+  Image,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  ViewBase,
+} from "react-native";
 import { View } from "react-native";
 import InputField from "../components/UI/InputField";
 import ButtonUI from "../components/UI/ButtonUI";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../store/user-context";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -14,14 +21,20 @@ const Schema = yup.object({
 
 const LoginScreen = ({ navigation }) => {
   const ctx = useContext(UserContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const registerHandler = () => {
     navigation.navigate("Register");
   };
+
+  const testHandler = () => {
+    navigation.navigate("Home");
+  };
   const loginHandler = async (values) => {
-    await ctx.setEmail(values.email);
-    await ctx.setPassword(values.password);
-    ctx.loggedUser();
+    // setEmail(values.email);
+    // setPassword(values.password);
+    await ctx.loggedUser(values.email, values.password);
     navigation.navigate("Home");
   };
 
@@ -72,6 +85,7 @@ const LoginScreen = ({ navigation }) => {
                 iconName="add-to-list"
                 onPress={registerHandler}
               />
+              <ButtonUI text="test" onPress={testHandler} />
             </View>
           </View>
         )}

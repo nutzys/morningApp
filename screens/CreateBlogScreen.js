@@ -30,19 +30,13 @@ const Schema = yup.object({
 const CreateBlogScreen = () => {
   const postCtx = useContext(PostContext);
   const userCtx = useContext(UserContext);
-  const [images, setImages] = useState([]);
   const [imageCount, setImageCount] = useState(0);
+  const [images, setImages] = useState([]);
   const screenWidth = Dimensions.get("screen").width;
-  const handleSubmit = async (values) => {
-    await imageHandler();
-    // postCtx.addTitle(values.title);
-    // postCtx.addContent(values.content);
-    // postCtx.setUid(userCtx.authUser.id);
-  };
+
   const imageHandler = async () => {
     let status = ImagePicker.requestMediaLibraryPermissionsAsync();
     const result = await ImagePicker.launchImageLibraryAsync();
-    console.log(images.length);
     if (images.length > 1) {
       Alert.alert(
         "Maximum exceeded!",
@@ -62,6 +56,12 @@ const CreateBlogScreen = () => {
     setImages(newState);
     setImageCount((prevCount) => prevCount - 1);
   };
+
+  const submitHandler = async (values) => {
+    postCtx.addTitle(values.title);
+    postCtx.addContent(values.content);
+    //postCtx.create(images);
+  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -71,7 +71,7 @@ const CreateBlogScreen = () => {
         <Formik
           initialValues={{ title: "", content: "" }}
           validationSchema={Schema}
-          onSubmit={handleSubmit}
+          onSubmit={submitHandler}
         >
           {({
             handleChange,
@@ -126,7 +126,7 @@ const CreateBlogScreen = () => {
                   </View>
                 </ScrollView>
                 <View style={styles.btnContainer}>
-                  <ButtonUI text="Add" />
+                  <ButtonUI text="Add" onPress={handleSubmit} />
                   <ButtonUI text="Cancel" outlined={true} />
                 </View>
               </>

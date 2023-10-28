@@ -13,6 +13,7 @@ import { StyleSheet } from "react-native";
 import { useContext } from "react";
 import BlogScreen from "./screens/BlogScreen";
 import CreateBlogScreen from "./screens/CreateBlogScreen";
+import PostContextProvider from "./store/post-context";
 
 export default function App({ navigation }) {
   const Stack = createNativeStackNavigator();
@@ -108,36 +109,38 @@ export default function App({ navigation }) {
 
   return (
     <UserContextProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          {!ctx.isAuth && (
-            <>
-              <Stack.Screen
-                name="Register"
-                component={RegisterScreen}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </>
-          )}
-          <Stack.Screen
-            name="Home"
-            component={DrawerNavigator}
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <PostContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            {!ctx.token && (
+              <>
+                <Stack.Screen
+                  name="Register"
+                  component={RegisterScreen}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="Login"
+                  component={LoginScreen}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+              </>
+            )}
+            <Stack.Screen
+              name="Home"
+              component={DrawerNavigator}
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PostContextProvider>
     </UserContextProvider>
   );
 }

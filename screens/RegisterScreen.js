@@ -18,11 +18,8 @@ const RegisterScreen = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
-  const registerHandler = async (values) => {
-    await ctx.setEmail(values.email);
-    await ctx.setName(values.names);
-    await ctx.setPassword(values.password);
-    ctx.makeUser();
+  const registerHandler = (values) => {
+    ctx.makeUser(values.name, values.email, values.password);
     navigation.navigate("Login");
   };
 

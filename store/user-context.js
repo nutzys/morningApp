@@ -1,69 +1,42 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { createUser } from "../api/createUser";
 import { loginUser } from "../api/loginUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const UserContext = createContext({
-  name: "",
-  email: "",
-  password: "",
-  isAuth: "",
-  authUser: "",
-  setName: () => {},
-  setEmail: () => {},
-  setPassword: () => {},
+  token: "",
+  user: "",
   makeUser: () => {},
-  setIsAuth: () => {},
   loggedUser: () => {},
-  setAuthUser: () => {},
   logout: () => {},
 });
 
 const UserContextProvider = ({ children }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isAuth, setIsAuth] = useState(false);
   const [token, setToken] = useState("");
-  const [authUser, setAuthUser] = useState({
-    name: "",
-    email: "",
-    id: "",
-  });
+  const [user, setUser] = useState("");
 
-  const makeUser = () => {
-    console.log(name);
+  const makeUser = (email, name, password) => {
     createUser(email, name, password);
   };
-  const loggedUser = async () => {
+
+  const loggedUser = async (email, password) => {
     const users = await loginUser(email, password);
-    await AsyncStorage.setItem("token", users.token);
+    const tokenData = await AsyncStorage.setItem("token", users.token);
+    setUser(users.user);
     setToken(users.token);
-    setAuthUser(users);
-    setIsAuth(true);
   };
 
   const logout = async () => {
-    //console.log(token);
     await AsyncStorage.removeItem("token");
+    setUser(null);
     setToken(null);
-    setAuthUser(null);
-    setIsAuth(false);
   };
 
   const value = {
-    name: name,
-    email: email,
-    password: password,
-    isAuth: isAuth,
-    authUser: authUser,
-    setName: setName,
-    setEmail: setEmail,
-    setPassword: setPassword,
+    token: token,
+    user: user,
     makeUser: makeUser,
-    setIsAuth: setIsAuth,
     loggedUser: loggedUser,
-    setAuthUser: setAuthUser,
     logout: logout,
   };
 

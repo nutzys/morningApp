@@ -1,17 +1,18 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import { createPost } from "../api/createPost";
+import { createImage } from "../api/createImage";
+import { UserContext } from "./user-context";
 
 export const PostContext = createContext({
   addTitle: () => {},
   addContent: () => {},
-  setUid: () => {},
-  setImgUrl: () => {},
+  create: () => {},
 });
 
 const PostContextProvider = ({ children }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [userId, setUserId] = useState("");
+  const userCtx = useContext(UserContext);
 
   const addTitle = (input) => {
     setTitle(input);
@@ -21,31 +22,22 @@ const PostContextProvider = ({ children }) => {
     setContent(input);
   };
 
-  const setUid = (input) => {
-    setUserId(input);
-  };
-
-  const setImgUrl = (input) => {
-    setImageUrl(input);
-  };
-
-  const createPost = () => {
-    const post = {
-      userId: userId,
-      title: title,
-      content: content,
-      createdAt: new Date(Date.now()),
-      imageUrl: imageUrl,
-      likeCount: 0,
-    };
-    createPost(post);
+  const create = async (images) => {
+    const result = await createPost(
+      userCtx.token.user.id,
+      title,
+      content,
+      new Date()
+    );
+    let post = result.data.posts;
+    console.log(post);
+    createImage(post.id, images);
   };
 
   const values = {
     addTitle: addTitle,
     addContent: addContent,
-    setUid: setUid,
-    setImgUrl: setImgUrl,
+    create: create,
   };
 
   return <PostContext.Provider value={values}>{children}</PostContext.Provider>;

@@ -5,9 +5,7 @@ import { UserContext } from "../store/user-context";
 const MainScreen = ({ navigation }) => {
   const ctx = useContext(UserContext);
   return (
-    <View>
-      {ctx.isAuth && <Text>Main screen, hello: {ctx.authUser.user.name}</Text>}
-    </View>
+    <View>{ctx.token && <Text>Main screen, hello: {ctx.user.name}</Text>}</View>
   );
 };
 
