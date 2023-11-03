@@ -1,8 +1,12 @@
 import { StyleSheet, Text, TextInput } from "react-native";
 import { COLORS } from "../../util/colors";
+import { FONTS } from "../../util/fonts";
+import { useFonts } from "expo-font";
+import { View } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 
 const InputField = ({
-  placeholder,
+  label,
   isPassword,
   onTextChange,
   error,
@@ -12,11 +16,23 @@ const InputField = ({
   nol,
   height,
 }) => {
+  const [fontsLoaded] = useFonts({
+    "Sans Light": require("../../assets/fonts/SourceSans3-Light.ttf"),
+    "Bebas Neue": require("../../assets/fonts/BebasNeue-Regular.ttf"),
+  });
   return (
     <>
+      <Text
+        style={{
+          fontFamily: FONTS.sanslight,
+          color: COLORS.gray300,
+          fontSize: 10,
+        }}
+      >
+        {label}
+      </Text>
       <TextInput
-        style={[styles.container, { height: height }]}
-        placeholder={placeholder}
+        style={styles.container}
         secureTextEntry={isPassword}
         onChangeText={onTextChange}
         defaultValue={value}
@@ -24,26 +40,34 @@ const InputField = ({
         multiline={multiline}
         numberOfLines={nol}
       />
-      <Text style={styles.errorMsg}>{error}</Text>
+      <View style={styles.errorContainer}>
+        {error && (
+          <FontAwesome name="exclamation-circle" size={12} color="red" />
+        )}
+        <Text style={styles.errorMsg}>{error}</Text>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: COLORS.gray,
     borderWidth: 1,
-    borderRadius: 9,
-    height: 45,
-    marginHorizontal: 10,
-    marginVertical: 8,
-    paddingLeft: 10,
-    backgroundColor: COLORS.front,
+    borderColor: COLORS.gray100,
+    borderRadius: 8,
+    height: 40,
+    paddingHorizontal: 10,
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   errorMsg: {
-    marginLeft: 15,
-    marginBottom: 4,
+    marginVertical: 4,
+    marginLeft: 4,
     color: "red",
-    fontSize: 12,
+    fontSize: 10,
   },
   invalid: {
     backgroundColor: "#FFCCCC",

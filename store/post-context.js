@@ -17,8 +17,9 @@ const PostContextProvider = ({ children }) => {
       content,
       new Date()
     );
-    console.log(result.data);
-    //createImage(result.id, images);
+    //console.log(result.data.posts.id);
+    //console.log(images);
+    createImage(result.data.posts.id, images);
   };
 
   const values = {

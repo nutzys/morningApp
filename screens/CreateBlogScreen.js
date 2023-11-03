@@ -23,8 +23,8 @@ import ImageDisplay from "../components/UI/ImageDisplay";
 import { COLORS } from "../util/colors";
 
 const Schema = yup.object({
-  title: yup.string().required().min(5),
-  content: yup.string().required().min(10),
+  title: yup.string().required().min(1),
+  content: yup.string().required().min(1),
 });
 
 const CreateBlogScreen = ({ navigation }) => {
@@ -36,8 +36,15 @@ const CreateBlogScreen = ({ navigation }) => {
 
   const imageHandler = async () => {
     let status = ImagePicker.requestMediaLibraryPermissionsAsync();
-    const result = await ImagePicker.launchImageLibraryAsync();
-    if (images.length > 1) {
+    const options = {
+      type: "library",
+      options: {
+        mediaType: "photo",
+        includeBase64: true,
+      },
+    };
+    const result = await ImagePicker.launchImageLibraryAsync(options);
+    if (imageCount >= 1) {
       Alert.alert(
         "Maximum exceeded!",
         "Maximum ammount of picture limit has been reached!"
@@ -46,7 +53,12 @@ const CreateBlogScreen = ({ navigation }) => {
     }
     setImages((prev) => [
       ...prev,
-      { uri: result.assets[0].uri, id: new Date() },
+      {
+        uri: result.assets[0].uri,
+        id: new Date(),
+        fileName: result.assets[0].fileName,
+        type: result.assets[0].type,
+      },
     ]);
     setImageCount(images.length + 1);
   };
@@ -59,6 +71,7 @@ const CreateBlogScreen = ({ navigation }) => {
 
   const submitHandler = (values) => {
     postCtx.create(values.title, values.content, images);
+    console.log(images);
     navigation.replace("Home");
   };
   return (
@@ -120,7 +133,7 @@ const CreateBlogScreen = ({ navigation }) => {
                     })}
                   <View style={styles.countContainer}>
                     <Text style={styles.countContainerText}>
-                      {imageCount}/2
+                      {imageCount}/1
                     </Text>
                   </View>
                 </ScrollView>
